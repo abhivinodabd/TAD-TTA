@@ -1,495 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>TAD-TTA</title>
-
-  <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 40px 25px;
-      color: #222;
-      line-height: 1.6;
-      background: #ffffff;
-    }
-
-    h1 {
-      font-size: 34px;
-      line-height: 1.25;
-      text-align: center;
-      margin-bottom: 15px;
-    }
-
-    h2 {
-      margin-top: 45px;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 8px;
-    }
-
-    .authors {
-      text-align: center;
-      font-size: 17px;
-      margin-bottom: 25px;
-    }
-
-    .authors a {
-      color: #1565c0;
-      text-decoration: none;
-    }
-
-    .links {
-      text-align: center;
-      margin: 25px 0 40px;
-    }
-
-    .button {
-      display: inline-block;
-      padding: 10px 18px;
-      margin: 5px;
-      background: #333;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-    }
-
-    .button:hover {
-      background: #555;
-    }
-
-    .abstract {
-      text-align: justify;
-      font-size: 16px;
-    }
-
-    .sample {
-      margin: 35px 0;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      background: #fafafa;
-    }
-
-    .prompt {
-      font-weight: bold;
-      margin-bottom: 20px;
-      font-size: 17px;
-    }
-
-    .audio-row {
-      display: grid;
-      grid-template-columns: 180px 1fr;
-      align-items: center;
-      gap: 15px;
-      margin: 14px 0;
-    }
-
-    .audio-row audio {
-      width: 100%;
-    }
-
-    .label {
-      font-weight: bold;
-    }
-
-    .footer {
-      margin-top: 60px;
-      padding-top: 20px;
-      border-top: 1px solid #ddd;
-      text-align: center;
-      color: #777;
-      font-size: 14px;
-    }
-  </style>
-</head>
-
-<body>
-
-  <!-- ========================================================= -->
-  <!-- TITLE -->
-  <!-- ========================================================= -->
-
-  <h1>
-    Timestep-Aware Diffusion Denoiser Scheduling
-    for Text-to-Audio Generation
-  </h1>
-
-  <div class="authors">
-    <strong>Abhinav Vinod</strong> and
-    <strong>Srikanth Raj Chetupalli</strong><br>
-    Indian Institute of Technology Bombay
-  </div>
-
-  <!-- ========================================================= -->
-  <!-- LINKS -->
-  <!-- ========================================================= -->
-
-  <div class="links">
-
-    <a class="button" href="#" target="_blank">
-      📄 Paper
-    </a>
-
-    <a class="button" href="#" target="_blank">
-      💻 Code
-    </a>
-
-  </div>
-
-
-  <!-- ========================================================= -->
-  <!-- ABSTRACT -->
-  <!-- ========================================================= -->
-
-  <h2>Abstract</h2>
-
-  <p class="abstract">
-    Diffusion models achieve strong text-to-audio generation quality but
-    require expensive denoiser evaluations. In this study, we investigate
-    efficient text-to-audio diffusion using timestep-aware multi-network
-    inference. We derive a collection of denoisers with varying computational
-    and memory complexities by pruning AudioLDM2 and then study the required
-    denoiser capacity at different steps along the diffusion trajectory.
-    Our results show that early, highly noisy stages tolerate substantial
-    model compression, whereas later stages are more capacity-sensitive.
-    Accordingly, scheduling denoisers of different capacities across the
-    reverse process provides a better quality-efficiency trade-off than
-    using a single compact denoiser throughout. Objective evaluations on
-    AudioCaps and Clotho, together with subjective evaluation on AudioCaps,
-    show that the timestep-aware denoiser scheduling reduces inference cost
-    while retaining strong generation quality and text-audio correspondence.
-  </p>
-
-
-  <!-- ========================================================= -->
-  <!-- AUDIO SAMPLES -->
-  <!-- ========================================================= -->
-
-  <h2>Audio Samples</h2>
-
-  <p>
-    We present audio samples for four representative captions.
-    For each caption, we provide the ground-truth audio and generations
-    from all nine evaluation settings.
-  </p>
-
-
-  <!-- ========================================================= -->
-  <!-- P01 -->
-  <!-- ========================================================= -->
-
-  <div class="sample">
-
-    <div class="prompt">
-      P01 — A vehicle horn beeps
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S1 — Ground Truth</div>
-      <audio controls preload="none">
-        <source src="audio/S01/P01.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S2 — Full</div>
-      <audio controls preload="none">
-        <source src="audio/S02/P01.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S3 — ATP1</div>
-      <audio controls preload="none">
-        <source src="audio/S03/P01.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S4 — ATP2</div>
-      <audio controls preload="none">
-        <source src="audio/S04/P01.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S5 — MN1</div>
-      <audio controls preload="none">
-        <source src="audio/S05/P01.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S6 — MN2</div>
-      <audio controls preload="none">
-        <source src="audio/S06/P01.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S7 — MN3</div>
-      <audio controls preload="none">
-        <source src="audio/S07/P01.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S8 — MN4</div>
-      <audio controls preload="none">
-        <source src="audio/S08/P01.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S9 — MN5</div>
-      <audio controls preload="none">
-        <source src="audio/S09/P01.wav" type="audio/wav">
-      </audio>
-    </div>
-
-  </div>
-
-
-  <!-- ========================================================= -->
-  <!-- P02 -->
-  <!-- ========================================================= -->
-
-  <div class="sample">
-
-    <div class="prompt">
-      P02 — A person is typing on a computer keyboard
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S1 — Ground Truth</div>
-      <audio controls preload="none">
-        <source src="audio/S1/P02.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S2 — Full</div>
-      <audio controls preload="none">
-        <source src="audio/S2/P02.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S3 — ATP1</div>
-      <audio controls preload="none">
-        <source src="audio/S3/P02.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S4 — ATP2</div>
-      <audio controls preload="none">
-        <source src="audio/S4/P02.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S5 — MN1</div>
-      <audio controls preload="none">
-        <source src="audio/S5/P02.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S6 — MN2</div>
-      <audio controls preload="none">
-        <source src="audio/S6/P02.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S7 — MN3</div>
-      <audio controls preload="none">
-        <source src="audio/S7/P02.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S8 — MN4</div>
-      <audio controls preload="none">
-        <source src="audio/S8/P02.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S9 — MN5</div>
-      <audio controls preload="none">
-        <source src="audio/S9/P02.wav" type="audio/wav">
-      </audio>
-    </div>
-
-  </div>
-
-
-  <!-- ========================================================= -->
-  <!-- P04 -->
-  <!-- ========================================================= -->
-
-  <div class="sample">
-
-    <div class="prompt">
-      P04 — A man is speaking and a dog is barking
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S1 — Ground Truth</div>
-      <audio controls preload="none">
-        <source src="audio/S1/P04.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S2 — Full</div>
-      <audio controls preload="none">
-        <source src="audio/S2/P04.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S3 — ATP1</div>
-      <audio controls preload="none">
-        <source src="audio/S3/P04.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S4 — ATP2</div>
-      <audio controls preload="none">
-        <source src="audio/S4/P04.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S5 — MN1</div>
-      <audio controls preload="none">
-        <source src="audio/S5/P04.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S6 — MN2</div>
-      <audio controls preload="none">
-        <source src="audio/S6/P04.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S7 — MN3</div>
-      <audio controls preload="none">
-        <source src="audio/S7/P04.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S8 — MN4</div>
-      <audio controls preload="none">
-        <source src="audio/S8/P04.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S9 — MN5</div>
-      <audio controls preload="none">
-        <source src="audio/S9/P04.wav" type="audio/wav">
-      </audio>
-    </div>
-
-  </div>
-
-
-  <!-- ========================================================= -->
-  <!-- P05 -->
-  <!-- ========================================================= -->
-
-  <div class="sample">
-
-    <div class="prompt">
-      P05 — A rocket flies by followed by a loud explosion and fire
-      crackling as a truck engine runs idle
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S1 — Ground Truth</div>
-      <audio controls preload="none">
-        <source src="audio/S1/P05.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S2 — Full</div>
-      <audio controls preload="none">
-        <source src="audio/S2/P05.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S3 — ATP1</div>
-      <audio controls preload="none">
-        <source src="audio/S3/P05.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S4 — ATP2</div>
-      <audio controls preload="none">
-        <source src="audio/S4/P05.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S5 — MN1</div>
-      <audio controls preload="none">
-        <source src="audio/S5/P05.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S6 — MN2</div>
-      <audio controls preload="none">
-        <source src="audio/S6/P05.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S7 — MN3</div>
-      <audio controls preload="none">
-        <source src="audio/S7/P05.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S8 — MN4</div>
-      <audio controls preload="none">
-        <source src="audio/S8/P05.wav" type="audio/wav">
-      </audio>
-    </div>
-
-    <div class="audio-row">
-      <div class="label">S9 — MN5</div>
-      <audio controls preload="none">
-        <source src="audio/S9/P05.wav" type="audio/wav">
-      </audio>
-    </div>
-
-  </div>
-
-
-  <!-- ========================================================= -->
-  <!-- FOOTER -->
-  <!-- ========================================================= -->
-
-  <div class="footer">
-    TAD-TTA &nbsp;·&nbsp;
-    Timestep-Aware Diffusion Denoiser Scheduling for Text-to-Audio Generation
-  </div>
-
-</body>
-</html>
+<div class="audio-row">
+  <div class="label">S1 — Ground Truth</div>
+  <audio controls preload="none">
+    <source src="audio/S01/P01.wav" type="audio/wav">
+  </audio>
+</div>
+
+<div class="audio-row">
+  <div class="label">S2 — Full</div>
+  <audio controls preload="none">
+    <source src="audio/S02/P01.wav" type="audio/wav">
+  </audio>
+</div>
+
+<div class="audio-row">
+  <div class="label">S3 — ATP1</div>
+  <audio controls preload="none">
+    <source src="audio/S03/P01.wav" type="audio/wav">
+  </audio>
+</div>
+
+<div class="audio-row">
+  <div class="label">S4 — ATP2</div>
+  <audio controls preload="none">
+    <source src="audio/S04/P01.wav" type="audio/wav">
+  </audio>
+</div>
+
+<div class="audio-row">
+  <div class="label">S5 — MN1</div>
+  <audio controls preload="none">
+    <source src="audio/S05/P01.wav" type="audio/wav">
+  </audio>
+</div>
+
+<div class="audio-row">
+  <div class="label">S6 — MN2</div>
+  <audio controls preload="none">
+    <source src="audio/S06/P01.wav" type="audio/wav">
+  </audio>
+</div>
+
+<div class="audio-row">
+  <div class="label">S7 — MN3</div>
+  <audio controls preload="none">
+    <source src="audio/S07/P01.wav" type="audio/wav">
+  </audio>
+</div>
+
+<div class="audio-row">
+  <div class="label">S8 — MN4</div>
+  <audio controls preload="none">
+    <source src="audio/S08/P01.wav" type="audio/wav">
+  </audio>
+</div>
+
+<div class="audio-row">
+  <div class="label">S9 — MN5</div>
+  <audio controls preload="none">
+    <source src="audio/S09/P01.wav" type="audio/wav">
+  </audio>
+</div>
