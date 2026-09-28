@@ -1,12 +1,349 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>TAD-TTA</title>
+
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 25px;
+      color: #222;
+      line-height: 1.6;
+      background: #ffffff;
+    }
+
+    h1 {
+      font-size: 34px;
+      line-height: 1.25;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    h2 {
+      margin-top: 45px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 8px;
+    }
+
+    .authors {
+      text-align: center;
+      font-size: 17px;
+      margin-bottom: 25px;
+    }
+
+    .authors a {
+      color: #1565c0;
+      text-decoration: none;
+    }
+
+    .links {
+      text-align: center;
+      margin: 25px 0 40px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 10px 18px;
+      margin: 5px;
+      background: #333;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    .button:hover {
+      background: #555;
+    }
+
+    .abstract {
+      text-align: justify;
+      font-size: 16px;
+    }
+
+    .method-image {
+      display: block;
+      max-width: 90%;
+      margin: 25px auto;
+    }
+
+    .sample {
+      margin: 35px 0;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fafafa;
+    }
+
+    .prompt {
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .audio-row {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      align-items: center;
+      gap: 15px;
+      margin: 10px 0;
+    }
+
+    .audio-row audio {
+      width: 100%;
+    }
+
+    .label {
+      font-weight: bold;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+
+    th {
+      background: #f2f2f2;
+    }
+
+    .footer {
+      margin-top: 60px;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+      text-align: center;
+      color: #777;
+      font-size: 14px;
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Timestep-Aware Diffusion Denoiser Scheduling for Text-to-Audio Generation</h1>
-  <h2>Coming Soon</h2>
-  <p>Code, paper, and audio samples will be released here.</p>
+
+  <!-- ========================================================= -->
+  <!-- TITLE -->
+  <!-- ========================================================= -->
+
+  <h1>
+    Timestep-Aware Diffusion Denoiser Scheduling
+    for Text-to-Audio Generation
+  </h1>
+
+  <div class="authors">
+    <strong>Abhinav Vinod</strong> and
+    <strong>Srikanth Raj Chetupalli</strong><br>
+    Indian Institute of Technology Bombay
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- LINKS -->
+  <!-- ========================================================= -->
+
+  <div class="links">
+
+    <!-- Replace these URLs -->
+    <a class="button" href="#" target="_blank">
+      📄 Paper
+    </a>
+
+    <a class="button" href="#" target="_blank">
+      💻 Code
+    </a>
+
+  </div>
+
+
+  <!-- ========================================================= -->
+  <!-- ABSTRACT -->
+  <!-- ========================================================= -->
+
+  <h2>Abstract</h2>
+
+  <p class="abstract">
+    Diffusion models achieve strong text-to-audio generation quality but
+    require expensive denoiser evaluations. In this study, we investigate
+    efficient text-to-audio diffusion using timestep-aware multi-network
+    inference. We derive a collection of denoisers with varying computational
+    and memory complexities by pruning AudioLDM2 and then study the required
+    denoiser capacity at different steps along the diffusion trajectory.
+    Our results show that early, highly noisy stages tolerate substantial
+    model compression, whereas later stages are more capacity-sensitive.
+    Accordingly, scheduling denoisers of different capacities across the
+    reverse process provides a better quality-efficiency trade-off than
+    using a single compact denoiser throughout. Objective evaluations on
+    AudioCaps and Clotho, together with subjective evaluation on AudioCaps,
+    show that the timestep-aware denoiser scheduling reduces inference cost
+    while retaining strong generation quality and text-audio correspondence.
+  </p>
+
+
+  <!-- ========================================================= -->
+  <!-- METHOD -->
+  <!-- ========================================================= -->
+
+  <h2>Method</h2>
+
+  <p>
+    TAD-TTA dynamically selects denoisers of different capacities at
+    different diffusion timesteps. Highly compressed denoisers are used
+    during early, noisy stages, while higher-capacity denoisers are used
+    during later stages where denoising becomes more sensitive to model
+    capacity.
+  </p>
+
+  <!-- Put your figure at assets/method.png -->
+  <img
+    class="method-image"
+    src="assets/method.png"
+    alt="Overview of timestep-aware denoiser scheduling"
+  >
+
+
+  <!-- ========================================================= -->
+  <!-- AUDIO SAMPLES -->
+  <!-- ========================================================= -->
+
+  <h2>Audio Samples</h2>
+
+  <p>
+    The following examples compare generations from the full AudioLDM2
+    model, a compact denoiser, and the proposed timestep-aware scheduling
+    approach.
+  </p>
+
+
+  <!-- SAMPLE 1 -->
+
+  <div class="sample">
+
+    <div class="prompt">
+      Prompt: A dog barking loudly while a car passes by.
+    </div>
+
+    <div class="audio-row">
+      <div class="label">Full Model</div>
+      <audio controls preload="none">
+        <source
+          src="assets/samples/sample1_full.wav"
+          type="audio/wav">
+      </audio>
+    </div>
+
+    <div class="audio-row">
+      <div class="label">Compact Model</div>
+      <audio controls preload="none">
+        <source
+          src="assets/samples/sample1_compact.wav"
+          type="audio/wav">
+      </audio>
+    </div>
+
+    <div class="audio-row">
+      <div class="label">TAD-TTA</div>
+      <audio controls preload="none">
+        <source
+          src="assets/samples/sample1_tadtta.wav"
+          type="audio/wav">
+      </audio>
+    </div>
+
+  </div>
+
+
+  <!-- SAMPLE 2 -->
+
+  <div class="sample">
+
+    <div class="prompt">
+      Prompt: Rain falling heavily with thunder in the background.
+    </div>
+
+    <div class="audio-row">
+      <div class="label">Full Model</div>
+      <audio controls preload="none">
+        <source
+          src="assets/samples/sample2_full.wav"
+          type="audio/wav">
+      </audio>
+    </div>
+
+    <div class="audio-row">
+      <div class="label">Compact Model</div>
+      <audio controls preload="none">
+        <source
+          src="assets/samples/sample2_compact.wav"
+          type="audio/wav">
+      </audio>
+    </div>
+
+    <div class="audio-row">
+      <div class="label">TAD-TTA</div>
+      <audio controls preload="none">
+        <source
+          src="assets/samples/sample2_tadtta.wav"
+          type="audio/wav">
+      </audio>
+    </div>
+
+  </div>
+
+
+  <!-- ========================================================= -->
+  <!-- RESULTS -->
+  <!-- ========================================================= -->
+
+  <h2>Results</h2>
+
+  <table>
+
+    <tr>
+      <th>Method</th>
+      <th>Compute</th>
+      <th>CLAP</th>
+      <th>FAD</th>
+    </tr>
+
+    <tr>
+      <td>AudioLDM2</td>
+      <td>100%</td>
+      <td>--</td>
+      <td>--</td>
+    </tr>
+
+    <tr>
+      <td>Compact Denoiser</td>
+      <td>--</td>
+      <td>--</td>
+      <td>--</td>
+    </tr>
+
+    <tr>
+      <td><strong>TAD-TTA</strong></td>
+      <td>--</td>
+      <td>--</td>
+      <td>--</td>
+    </tr>
+
+  </table>
+
+
+  <!-- ========================================================= -->
+  <!-- FOOTER -->
+  <!-- ========================================================= -->
+
+  <div class="footer">
+    TAD-TTA &nbsp;·&nbsp;
+    Timestep-Aware Diffusion Denoiser Scheduling for Text-to-Audio Generation
+  </div>
+
 </body>
 </html>
