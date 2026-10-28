@@ -261,7 +261,7 @@
     </div>
 
     <div class="audio-row">
-      <div class="label">S3 — ATP01</div>
+      <div class="label">S3 — ATP1</div>
       <audio controls preload="none">
         <source src="audio/S03/P01.wav" type="audio/wav">
       </audio>
@@ -337,7 +337,7 @@
     </div>
 
     <div class="audio-row">
-      <div class="label">S3 — ATP01</div>
+      <div class="label">S3 — ATP1</div>
       <audio controls preload="none">
         <source src="audio/S03/P03.wav" type="audio/wav">
       </audio>
@@ -414,7 +414,7 @@
     </div>
 
     <div class="audio-row">
-      <div class="label">S3 — ATP01</div>
+      <div class="label">S3 — ATP1</div>
       <audio controls preload="none">
         <source src="audio/S03/P10.wav" type="audio/wav">
       </audio>
@@ -473,6 +473,23 @@
     TAD-TTA &nbsp;·&nbsp;
     Timestep-Aware Diffusion Denoiser Scheduling for Text-to-Audio Generation
   </div>
+
+  <script>
+    const sampleOrder = {
+      "P02": 1,
+      "P03": 2,
+      "P01": 3
+    };
+
+    const samples = [...document.querySelectorAll(".sample")];
+    samples
+      .sort((a, b) => {
+        const promptA = a.querySelector(".prompt").textContent.trim().slice(0, 3);
+        const promptB = b.querySelector(".prompt").textContent.trim().slice(0, 3);
+        return sampleOrder[promptA] - sampleOrder[promptB];
+      })
+      .forEach(sample => sample.parentNode.insertBefore(sample, document.querySelector(".footer")));
+  </script>
 
 </body>
 </html>
